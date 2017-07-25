@@ -2,6 +2,7 @@ import 'pixi';
 import 'p2';
 import 'phaser';
 import map01 from './maps/01';
+import Player from './Player'
 
 let terrain = {
 	D: 'dirt',
@@ -30,7 +31,7 @@ export default class TheGame {
 	height = 640;
 	game: Phaser.Game;
 	terrain: Phaser.Sprite[][];
-	player: Phaser.Sprite;
+	player: Player;
 	
 	preload() {
 		this.game.load.image('player', 'img/player.png');
@@ -52,16 +53,16 @@ export default class TheGame {
 	
 	update() {
 		if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-			this.player.x -= speed;
+			this.player.moveLeft()
 		}
 		if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-			this.player.x += speed;
+			this.player.moveRight();
 		}
 		if (this.game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
-			this.player.y -= speed;
+			this.player.moveUp();
 		}
 		if (this.game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
-			this.player.y += speed;
+			this.player.moveDown();
 		}
 		
 
@@ -85,6 +86,6 @@ export default class TheGame {
 	}
 	
 	setPlayer() {
-		this.player = this.game.add.sprite(128, 128, 'player');
+		this.player = new Player(this.game.add.sprite(128, 128, 'player'));
 	}
 }
