@@ -18,6 +18,7 @@ module.exports = {
 	},
 	plugins: [
 		//this instance of the chunks instance collects all the common/multiple use "modules" in our code base
+		/*
 		new webpack.optimize.CommonsChunkPlugin({
 			name: 'vendor',
 			minChunks: function (module) {
@@ -25,10 +26,13 @@ module.exports = {
 				return module.context && (module.context.indexOf('node_modules') !== -1);
 			}
 		}),
+		*/
 		//because we catch every lib/vendor module with the chunks instance above the only thing left for this chunks instance to catch is the webpack manifest/wrapper engine
+		/*
 		new webpack.optimize.CommonsChunkPlugin({
 			name: 'manifest'
 		})
+		*/
 	],
 	module: {
 		loaders: [
@@ -52,7 +56,6 @@ module.exports = {
 	devServer: {
 		contentBase: path.join(__dirname),
 		compress: true,
-		port: 9000,
 		inline: true,
 		watchOptions: {
 			aggregateTimeout: 300,

@@ -39,6 +39,7 @@ export default class TheGame {
 		this.game.load.image('error', 'img/terrain-error.png');
 		this.game.load.image('grass', 'img/terrain-grass.png');
 		this.game.load.image('water', 'img/terrain-water.png');
+		this.game.load.image('sword', 'img/sword.png');
 	}
 	
 	create() {
@@ -64,7 +65,11 @@ export default class TheGame {
 		if (this.game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
 			this.player.moveDown();
 		}
-		
+		if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
+			//console.log('spacebar is down');
+			this.player.attack();
+			
+		}
 
 	}
 	
@@ -86,6 +91,6 @@ export default class TheGame {
 	}
 	
 	setPlayer() {
-		this.player = new Player(this.game.add.sprite(128, 128, 'player'));
+		this.player = new Player(this.game, this.game.add.sprite(128, 128, 'player'));
 	}
 }
