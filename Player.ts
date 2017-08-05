@@ -1,6 +1,6 @@
 import 'phaser';
 
-let stepSize = 16;
+let stepSize = 32;
 
 export default class Player {
 	constructor(game: Phaser.Game, sprite: Phaser.Sprite) {
@@ -70,11 +70,46 @@ export default class Player {
 	}
 	
 	moveY(amount: number) {
-		this.sprite.y += amount;
+		var velocity = this.sprite.body.velocity.y;
+		if ((amount*velocity) < 0) {
+			velocity = Math.abs(velocity) > Math.abs(amount) ? velocity / 3 : 0;
+			this.sprite.body.velocity.y = velocity;
+		} else {
+			this.sprite.body.velocity.y += amount;
+		}
 	}
 	
 	moveX(amount: number) {
-		this.sprite.x += amount;
+		var velocity = this.sprite.body.velocity.x;
+		if ((amount*velocity) < 0) {
+			velocity = Math.abs(velocity) > Math.abs(amount) ? velocity / 3 : 0;
+			this.sprite.body.velocity.x = velocity;
+		} else {
+			this.sprite.body.velocity.x += amount;
+		}
+	}
+
+	stop() {
+		this.stopX();
+		this.stopY();
+	}
+
+	stopX() {
+		let delta = this.sprite.body.velocity.x / 2;
+		if (delta > stepSize || delta < stepSize * -1) {
+			this.sprite.body.velocity.x += -delta;
+		} else {
+			this.sprite.body.velocity.x = 0;
+		}
+	}
+
+	stopY() {
+		let delta = this.sprite.body.velocity.y / 2;
+		if (delta > stepSize || delta < stepSize * -1) {
+			this.sprite.body.velocity.y += -delta;
+		} else {
+			this.sprite.body.velocity.y = 0;
+		}
 	}
 }
 

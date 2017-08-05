@@ -1,7 +1,7 @@
 import 'pixi';
 import 'p2';
 import 'phaser';
-import map01 from './maps/01';
+//import map01 from './maps/01';
 import Player from './Player'
 
 let terrain = {
@@ -19,9 +19,9 @@ export default class TheGame {
 			this.height, 
 			Phaser.AUTO, 
 			'content', { 
-				preload: () => this.preload(), 
-				create: () => this.create(),
-				update: () => this.update()
+				preload: () => { this.preload() }, 
+				create: () => { this.create() },
+				update: () => { this.update() }
 			}
 		);
 		window['theGame'] = this;
@@ -32,6 +32,8 @@ export default class TheGame {
 	game: Phaser.Game;
 	terrain: Phaser.Sprite[][];
 	player: Player;
+	map: Phaser.Tilemap;
+	terrainLayer;
 	
 	preload() {
 		this.game.load.image('player', 'img/player.png');
@@ -40,57 +42,56 @@ export default class TheGame {
 		this.game.load.image('grass', 'img/terrain-grass.png');
 		this.game.load.image('water', 'img/terrain-water.png');
 		this.game.load.image('sword', 'img/sword.png');
+		this.game.load.tilemap('world01', 'maps/world01.json', null, Phaser.Tilemap.TILED_JSON);
+		this.game.load.image('terrain', '/img/terrain.png');
 	}
 	
 	create() {
-		this.setMap(map01);
+		this.game.physics.startSystem(Phaser.Physics.ARCADE);
+		this.setMap('world01');
 		this.setPlayer();
-		/*
-        let text = "It works!";
-        let style = { font: "64px Arial", fill: "#ff0000", align: "center" };
-		this.game.add.text(0, 0, text, style);
-		*/
 	}
 	
 	update() {
-		if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
+		this.game.physics.arcade.collide(this.player.sprite, this.terrainLayer)
+		let moveLeft = this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT);
+		let moveRight = this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT);
+		let moveUp = this.game.input.keyboard.isDown(Phaser.Keyboard.UP);
+		let moveDown = this.game.input.keyboard.isDown(Phaser.Keyboard.DOWN);
+		if (moveLeft) {
 			this.player.moveLeft()
 		}
-		if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
+		if (moveRight) {
 			this.player.moveRight();
 		}
-		if (this.game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
+		if (moveUp) {
 			this.player.moveUp();
 		}
-		if (this.game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
+		if (moveDown) {
 			this.player.moveDown();
+		}
+		if (!moveLeft && !moveRight && !moveUp && !moveDown) {
+			this.player.stop();
 		}
 		if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
 			//console.log('spacebar is down');
 			this.player.attack();
-			
 		}
-
 	}
 	
-	setMap(map: any) {
-		let sprites = [];
-		let terrainArray = map.terrain;
-		for (var verticalIndex = 0; verticalIndex < terrainArray.length; verticalIndex++) {
-			for (var horizontalIndex = 0; horizontalIndex < terrainArray[verticalIndex].length; horizontalIndex++) {
-				let spriteType = terrainArray[verticalIndex][horizontalIndex];
-				//console.log('loading sprite', spriteType, terrain[spriteType], horizontalIndex * 64, verticalIndex * 64);
-				let sprite = this.game.add.sprite(horizontalIndex * 64, verticalIndex * 64, terrain[spriteType] || terrain.E);
-				if (verticalIndex === 0) {
-					sprites.push([]);
-				}
-				sprites[horizontalIndex].push(sprite);
-			}
-		}
-		this.terrain = sprites;
+	setMap(mapId: any) {
+		this.map = this.game.add.tilemap(mapId);
+		this.map.addTilesetImage('terrain', 'terrain');
+		this.terrainLayer = this.map.createLayer('Ground');
+		this.map.setCollisionBetween(0, 1, true, 'Ground');
+		this.terrainLayer.resizeWorld();
 	}
 	
 	setPlayer() {
 		this.player = new Player(this.game, this.game.add.sprite(128, 128, 'player'));
+		this.game.physics.enable(this.player.sprite, Phaser.Physics.ARCADE);
+		this.game.camera.follow(this.player.sprite);
+		this.player.sprite.body.setSize(32, 32, 16, 16);
+
 	}
 }
