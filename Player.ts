@@ -1,6 +1,7 @@
 import 'phaser';
 
 let stepSize = 32;
+let maxVelocity = 256;
 
 export default class Player {
 	constructor(game: Phaser.Game, sprite: Phaser.Sprite) {
@@ -18,7 +19,7 @@ export default class Player {
 	currentAttackDirection = AttackDirection.Down;
 	
 	initWeapons() {
-		this.weapons = [this.game.make.sprite(32, 32, 'sword')];
+		this.weapons = [this.game.make.sprite(0, 0, 'sword')];
 		
 		for (var weapon of this.weapons) {
 			weapon.alpha = 0;
@@ -74,6 +75,10 @@ export default class Player {
 		if ((amount*velocity) < 0) {
 			velocity = Math.abs(velocity) > Math.abs(amount) ? velocity / 3 : 0;
 			this.sprite.body.velocity.y = velocity;
+		} else if (this.sprite.body.velocity.y + amount < -maxVelocity) {
+			this.sprite.body.velocity.y = -maxVelocity;
+		} else if (this.sprite.body.velocity.y + amount > maxVelocity) {
+			this.sprite.body.velocity.y = maxVelocity;
 		} else {
 			this.sprite.body.velocity.y += amount;
 		}
@@ -84,6 +89,10 @@ export default class Player {
 		if ((amount*velocity) < 0) {
 			velocity = Math.abs(velocity) > Math.abs(amount) ? velocity / 3 : 0;
 			this.sprite.body.velocity.x = velocity;
+		} else if (this.sprite.body.velocity.x + amount < -maxVelocity) {
+			this.sprite.body.velocity.x = -maxVelocity;
+		} else if (this.sprite.body.velocity.x + amount > maxVelocity) {
+			this.sprite.body.velocity.x = maxVelocity;
 		} else {
 			this.sprite.body.velocity.x += amount;
 		}

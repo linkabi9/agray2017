@@ -9,12 +9,12 @@
 	},
 	"exclude": [
 		"node_modules",
-	"dist"
+		"dist"
 	],
 	"typeRoots": [
 		"node_modules/@types"
 	],
 	"files": [
-		"./node_modules/phaser-ce/typescript/phaser.comments.d.ts"
+		"./phaser.comments.d.ts"
 	]
 }
